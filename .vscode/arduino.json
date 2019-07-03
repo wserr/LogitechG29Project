@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:uno",
+    "programmer": "Arduino as ISP",
+    "port": "COM7",
+    "sketch": "I2CSlave\\I2CSlave.ino"
+}
