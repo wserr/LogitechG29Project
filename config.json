@@ -1,0 +1,12 @@
+{
+    "UseArduino" : 1,
+    "PrintValuesToConsole" : 1,
+    "ArduinoDeviceName" : "/dev/ttyACM0",
+    "ControllerIndex" : 0,
+    "SteeringWheelCode": "TEST",
+    "GasPedalCode": "TEST",
+    "ABS_X": "ABS_X",
+    "ABS_Y": "ABS_Y",
+    "ABS_RX": "ABS_RX",
+    "ABS_RY": "ABS_RY"
+}
