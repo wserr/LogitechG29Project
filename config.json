@@ -1,5 +1,5 @@
 {
-    "UseArduino" : 0,
+    "UseArduino" : 1,
     "PrintValuesToConsole" : 1,
     "ArduinoDeviceName" : "/dev/ttyACM0",
     "ControllerIndex" : 0,

@@ -5,6 +5,8 @@ import serial
 import struct
 import json
 import threading
+import smbus
+import time
 
 # Global variables
 UseArduino = 0
@@ -20,6 +22,9 @@ ABS_RX = ""
 ABS_RY = ""
 
 ev = None
+bus = None
+
+address = 0x08
 
 class ExportValues:
     def __init__(self, x,y,rx,ry):
@@ -30,28 +35,21 @@ class ExportValues:
 
 
 def Export():
-    timer = threading.Timer(0.1, Export)
+    timer = threading.Timer(0.05, Export)
     timer.daemon = True
     timer.start()
     global ev
+    global bus
+    global address
+
 
     if (ev != None):
         if PrintValuesToConsole:
             print(ev.x,ev.y,ev.rx,ev.ry)
-            print(ConvertToBytes(ev.x))
-            print(str(ConvertToBytes(ev.y)))
-            print(str(ConvertToBytes(ev.rx)))
-            print(str(ConvertToBytes(ev.ry)))
 
         if UseArduino:
-            ser.write(ConvertToBytes(ev.x))
-            ser.write(ConvertToBytes(ev.y))
-            ser.write(ConvertToBytes(ev.rx))
-            ser.write(ConvertToBytes(ev.ry))
+            bus.write_i2c_block_data(address,255,[ev.x,ev.y,ev.rx,ev.ry])
 
-
-def ConvertToBytes(value):
-    return struct.pack('>B', value)
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
     # Figure out how 'wide' each range is
@@ -84,10 +82,8 @@ except:
 
 if UseArduino:
     try:
-        ser = serial.Serial(ArduinoDeviceName, 9600, timeout=0)
-        print('Serial device connected')
+        bus = smbus.SMBus(1)       
     except Exception as e:
-        print('No serial connection found')
         print(e)
         sys.exit()
 
@@ -113,10 +109,7 @@ try:
             ev = ExportValues(Value_X,Value_Y,Value_RX,Value_RY)
 except:
     print(sys.exc_info())
-finally:
-    if UseArduino:
-        ser.close() 
-        print("Arduino Connection Ended")
+
 
 
 
