@@ -1,7 +1,6 @@
 {
     "UseArduino" : 1,
     "PrintValuesToConsole" : 1,
-    "ArduinoDeviceName" : "/dev/ttyACM0",
     "ControllerIndex" : 0,
     "SteeringWheelCode": "TEST",
     "GasPedalCode": "TEST",

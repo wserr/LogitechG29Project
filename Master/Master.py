@@ -11,10 +11,7 @@ import time
 # Global variables
 UseArduino = 0
 PrintValuesToConsole = 0
-ArduinoDeviceName = ""
 ControllerIndex = 0
-SteeringWheelCode = ""
-GasPedalCode = ""
 
 ABS_X = ""
 ABS_Y = ""
@@ -24,7 +21,7 @@ ABS_RY = ""
 ev = None
 bus = None
 
-address = 0x08
+arduino_i2c_address = 0x08
 
 class ExportValues:
     def __init__(self, x,y,rx,ry):
@@ -40,7 +37,7 @@ def Export():
     timer.start()
     global ev
     global bus
-    global address
+    global arduino_i2c_address
 
 
     if (ev != None):
@@ -48,7 +45,7 @@ def Export():
             print(ev.x,ev.y,ev.rx,ev.ry)
 
         if UseArduino:
-            bus.write_i2c_block_data(address,255,[ev.x,ev.y,ev.rx,ev.ry])
+            bus.write_i2c_block_data(arduino_i2c_address,255,[ev.x,ev.y,ev.rx,ev.ry])
 
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
@@ -67,10 +64,7 @@ try:
         data = json.load(config_file)
     UseArduino = data['UseArduino']
     PrintValuesToConsole = data['PrintValuesToConsole']
-    ArduinoDeviceName = data['ArduinoDeviceName']
     ControllerIndex = data['ControllerIndex']
-    SteeringWheelCode = data['SteeringWheelCode']
-    GasPedalCode = data ['GasPedalCode']
     ABS_X = data['ABS_X']
     ABS_Y = data['ABS_Y']
     ABS_RX = data['ABS_RX']
