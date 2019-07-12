@@ -7,6 +7,7 @@ import json
 import threading
 import smbus
 import time
+import math
 
 # Global variables
 UseArduino = 0
@@ -23,6 +24,18 @@ bus = None
 
 arduino_i2c_address = 0x08
 
+
+class ValidateExportValues:
+    threshold = 5
+
+    def Validate(ev,prevEv):
+        if math.abs(ev.x - prevEv.x) > threshold or math.abs(ev.y-prevEv.y) > threshold or math.abs(ev.rx - prevEv.rx) > threshold or math.abs(ev.ry - prevEv.ry) > threshold:
+            return False
+
+        return True 
+        
+
+
 class ExportValues:
     def __init__(self, x,y,rx,ry):
         self.x = x
@@ -32,6 +45,7 @@ class ExportValues:
 
 
 def Export():
+    previousEv = None
     timer = threading.Timer(0.05, Export)
     timer.daemon = True
     timer.start()
@@ -40,12 +54,14 @@ def Export():
     global arduino_i2c_address
 
 
-    if (ev != None):
+    if (ev != None and (previousEv = None or not ValidateExportValues.Validate(ev,previousEv))):
         if PrintValuesToConsole:
             print(ev.x,ev.y,ev.rx,ev.ry)
 
         if UseArduino:
             bus.write_i2c_block_data(arduino_i2c_address,255,[ev.x,ev.y,ev.rx,ev.ry])
+        previousEv = ev
+            
 
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
