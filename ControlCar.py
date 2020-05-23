@@ -16,7 +16,7 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     return int(rightMin + (valueScaled * rightSpan))
 
 try:
-    ser = serial.Serial('/dev/cu.usbmodem1411', 9600, timeout=0)
+    ser = serial.Serial('COM3', 115200, timeout=0)
     print('Serial device connected')
 except Exception as e:
     print('No serial connection found')
@@ -43,6 +43,8 @@ try:
     print('Name of joystick: {}'.format(name))
     while True:
         pygame.event.pump()
+        ser.flushInput()
+        ser.flushOutput()
         axis1 = Joystick.get_axis(1)
         axis2 = Joystick.get_axis(0)
         axis1Value = (translate(axis1,-6,6,0,255))
@@ -52,8 +54,6 @@ try:
         sendValues2 = struct.pack('>B',axis2Value)
         ser.write(sendValues2)
         print('{}     {}'.format(axis1Value,axis2Value))
-        sleep(0.01)
-
 
 except Exception as e:
     print('Error while reading joystick: {}'.format(str(e)))
