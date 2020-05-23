@@ -20,21 +20,20 @@ ABS_RX = ""
 ABS_RY = ""
 
 ev = None
+previousEv = None
 bus = None
 
 arduino_i2c_address = 0x08
 
 
 class ValidateExportValues:
-    threshold = 5
 
     def Validate(ev,prevEv):
-        if math.abs(ev.x - prevEv.x) > threshold or math.abs(ev.y-prevEv.y) > threshold or math.abs(ev.rx - prevEv.rx) > threshold or math.abs(ev.ry - prevEv.ry) > threshold:
+        threshold = 5
+        if abs(ev.x - prevEv.x) > threshold or abs(ev.y-prevEv.y) > threshold or abs(ev.rx - prevEv.rx) > threshold or abs(ev.ry - prevEv.ry) > threshold:
             return False
-
         return True 
         
-
 
 class ExportValues:
     def __init__(self, x,y,rx,ry):
@@ -45,22 +44,28 @@ class ExportValues:
 
 
 def Export():
-    previousEv = None
-    timer = threading.Timer(0.05, Export)
+    global previousEv
+    timer = threading.Timer(0.08, Export)
     timer.daemon = True
     timer.start()
     global ev
     global bus
     global arduino_i2c_address
 
+    export = False
+    if (ev != None ):
+        if(previousEv == None):
+            export = True
+        else:
+            export = not ValidateExportValues.Validate(ev,previousEv)
+        
+        if export:
+            if PrintValuesToConsole:
+                print(ev.x,ev.y,ev.rx,ev.ry)
 
-    if (ev != None and (previousEv = None or not ValidateExportValues.Validate(ev,previousEv))):
-        if PrintValuesToConsole:
-            print(ev.x,ev.y,ev.rx,ev.ry)
-
-        if UseArduino:
-            bus.write_i2c_block_data(arduino_i2c_address,255,[ev.x,ev.y,ev.rx,ev.ry])
-        previousEv = ev
+            if UseArduino:
+                bus.write_i2c_block_data(arduino_i2c_address,255,[ev.x,ev.y,ev.rx,ev.ry])
+            previousEv = ev
             
 
 

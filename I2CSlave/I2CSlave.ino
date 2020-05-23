@@ -47,15 +47,11 @@ void loop() {
   if (dataChanged(prevSteerPosition,steerPosition) || dataChanged(prevThrottlePosition,throttlePosition))
   {
     DAC1.Set(steerPosition,throttlePosition);
-    Serial.println("DAC1 set");
-    delay(10);
   }
 
   if (dataChanged(prevAux1Position,aux1Position) || dataChanged(prevAux2Position,aux2Position))
   {
     DAC2.Set(aux1Position,aux2Position);
-    Serial.println("DAC2 set");
-    delay(10);
   }
 }
 
